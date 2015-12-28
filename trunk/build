@@ -1,0 +1,23 @@
+#! /usr/bin/sh
+
+PROJECT_NAME=boombox
+
+REV=$(svn info -r 'HEAD' | tail -3 | head -1 | awk '{print $4}' )
+#REV=10
+
+PNAME=$PROJECT_NAME-r$REV
+
+DIST=../dist/$PNAME
+
+
+rm -rf $DIST
+rm -f ../dist/$PNAME.tar.gz
+
+C:/Program\ Files/JS\ Builder/JSBuildConsole.exe /path=source/BoomBox.jsb /output=$DIST
+java -jar $EXTDOC_HOME/ext-doc.jar -p doc-config.xml -o $DIST/docs -t doc-template/ext/template.xml -verbose
+svn export examples $DIST/examples
+svn export resources $DIST/resources
+
+cd ../dist
+
+tar zcvf $PNAME.tar.gz $PNAME
